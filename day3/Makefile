@@ -4,7 +4,8 @@ CXXFLAGS=-Wall -std=c++17 -O2
 
 all: day3
 
-day3: day3.cpp
+day3: day3.o
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 clean:
 	@rm -f day3 *.o
