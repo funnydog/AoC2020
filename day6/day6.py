@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-def sum_common_answers(txt, intersect = False):
-    value = 0
+def sum_common_answers(txt):
+    sum_any = 0
+    sum_all = 0
     answers = [0] * 26
     group_count = 0
 
@@ -14,18 +15,22 @@ def sum_common_answers(txt, intersect = False):
             group_count += 1
         elif group_count:
             for answer in answers:
-                if (intersect and answer == group_count) or (not intersect and answer != 0):
-                    value += 1
+                if answer > 0:
+                    sum_any += 1
+                if answer == group_count:
+                    sum_all += 1
 
             answers = [0] * 26
             group_count = 0
 
     if group_count:
         for answer in answers:
-            if (intersect and answer == group_count) or (not intersect and answer != 0):
-                value += 1
+            if answer > 0:
+                sum_any += 1
+            if answer == group_count:
+                sum_all += 1
 
-    return value
+    return sum_any, sum_all
 
 txt = """abc
 
@@ -43,11 +48,12 @@ a
 
 b"""
 
-assert sum_common_answers(txt, False) == 11
-assert sum_common_answers(txt, True) == 6
+
+assert sum_common_answers(txt) == (11, 6)
 
 with open("input", "rt") as f:
     txt = f.read()
 
-print("Part1:", sum_common_answers(txt, False))
-print("Part2:", sum_common_answers(txt, True))
+part1, part2 = sum_common_answers(txt)
+print("Part1:", part1)
+print("Part2:", part2)

@@ -1,26 +1,21 @@
 #include <algorithm>
 #include <fstream>
-#include <functional>
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-static int sum_common_answers(const vector<string>& lines, bool intersect)
+static pair<int, int> sum_common_answers(istream& input)
 {
-	int sum = 0;
+	int any = 0;
+	int all = 0;
 	int group_count = 0;
 	int answers[26];
 	fill(answers, answers+26, 0);
 
-	function<bool(int)> predicate = [intersect, &group_count](int value)
+	string line;
+	do
 	{
-		return intersect ? value == group_count : value != 0;
-	};
-
-	for (const auto& line: lines)
-	{
-		if (line.size())
+		if (getline(input, line) && line.size())
 		{
 			for (auto letter: line)
 			{
@@ -33,16 +28,17 @@ static int sum_common_answers(const vector<string>& lines, bool intersect)
 		}
 		else if (group_count)
 		{
-			sum += count_if(answers, answers+26, predicate);
+			for (auto a: answers)
+			{
+				any += a > 0;
+				all += a == group_count;
+			}
 			fill(answers, answers+26, 0);
 			group_count = 0;
 		}
-	}
-	if (group_count)
-	{
-		sum += count_if(answers, answers+26, predicate);
-	}
-	return sum;
+	} while (input);
+
+	return make_pair(any, all);
 }
 
 int main(int argc, char *argv[])
@@ -60,15 +56,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	vector<string> lines;
-	string line;
-	while (getline(input, line))
-	{
-		lines.emplace_back(line);
-	}
+	auto sums = sum_common_answers(input);
 	input.close();
 
-	cout << "Part1: " << sum_common_answers(lines, false) << endl
-	     << "Part2: " << sum_common_answers(lines, true) << endl;
+	cout << "Part1: " << sums.first << endl
+	     << "Part2: " << sums.second << endl;
+
 	return 0;
 }
