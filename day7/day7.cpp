@@ -33,6 +33,12 @@ struct Graph
 		return newgraph;
 	}
 
+	void clear()
+	{
+		lookup.clear();
+		vertices.clear();
+	}
+
 	int add_vertex(const string& name)
 	{
 		auto it = lookup.find(name);
@@ -103,28 +109,32 @@ struct Graph
 
 istream& operator>>(istream& input, Graph& graph)
 {
-	regex pat1("(.*) bags contain");
-	regex pat2("(\\d+) ([^.,]*) bags?[.,]");
+	const regex pattern("(.*) bags contain|(\\d+) ([^.,]*) bag");
+
+	graph.clear();
 	string line;
 	while (getline(input, line))
 	{
-		smatch sm;
-		if (!regex_search(line, sm , pat1))
+		auto it = sregex_iterator(line.begin(), line.end(), pattern);
+		auto end = sregex_iterator();
+		if (it == end || !(*it)[1].length())
 		{
 			continue;
 		}
+		int v1 = graph.add_vertex((*it)[1]);
 
-		int v1 = graph.add_vertex(sm[1]);
-
-		auto end = sregex_iterator();
-		for (auto it = sregex_iterator(line.begin(), line.end(), pat2);
-		     it != end;
-		     ++it)
+		for (++it; it != end; ++it)
 		{
-			sm = *it;
-			int v2 = graph.add_vertex(sm[2]);
-			graph.add_edge(v1, v2, stoi(sm[1]));
+			if ((*it)[2].length())
+			{
+				int v2 = graph.add_vertex((*it)[3]);
+				graph.add_edge(v1, v2, stoi((*it)[2]));
+			}
 		}
+	}
+	if (graph.vertices.size())
+	{
+		input.clear();
 	}
 	return input;
 }
@@ -147,6 +157,11 @@ int main(int argc, char *argv[])
 	Graph graph;
 	input >> graph;
 	input.close();
+	if (input.fail())
+	{
+		cerr << "Unable to parse the graph" << endl;
+		return 1;
+	}
 
 	cout << "Part1: " << graph.containing_colors("shiny gold") << endl
 	     << "Part2: " << graph.contained_bags("shiny gold") << endl;
