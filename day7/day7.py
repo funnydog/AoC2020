@@ -2,19 +2,20 @@
 
 import re
 
-BAG_PATTERN = re.compile(r"(\d+) (.*)")
-SPLIT_PATTERN = re.compile(r" bags contain | bags?, | bags?.")
+PATTERN = re.compile(r"(.*) bags contain|(\d+) ([^.,]*) bag")
 
 def parse_graph(txt):
     graph = {}
     for line in txt.split("\n"):
-        lst = SPLIT_PATTERN.split(line)
-        name = lst.pop(0)
+        lst = PATTERN.findall(line)
+        if not lst:
+            continue
+        name, _, _ = lst.pop(0)
+        if not name:
+            continue
         graph[name] = []
-        for bag in lst:
-            m = BAG_PATTERN.match(bag)
-            if m:
-                graph[name].append((m[2], int(m[1])))
+        for _, num, color in lst:
+            graph[name].append((color, int(num)))
     return graph
 
 def transpose(graph):
