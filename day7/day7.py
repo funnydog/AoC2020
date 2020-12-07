@@ -1,23 +1,32 @@
 #!/usr/bin/env python3
 
-import collections
 import re
 
 BAG_PATTERN = re.compile(r"(\d+) (.*)")
 SPLIT_PATTERN = re.compile(r" bags contain | bags?, | bags?.")
 
 def parse_graph(txt):
-    forward = collections.defaultdict(lambda: [])
-    backwards = collections.defaultdict(lambda: [])
+    graph = {}
     for line in txt.split("\n"):
         lst = SPLIT_PATTERN.split(line)
         name = lst.pop(0)
+        graph[name] = []
         for bag in lst:
             m = BAG_PATTERN.match(bag)
             if m:
-                forward[name].append((m[2], int(m[1])))
-                backwards[m[2]].append((name, int(m[1])))
-    return forward, backwards
+                graph[name].append((m[2], int(m[1])))
+    return graph
+
+def transpose(graph):
+    newg = {}
+    for key in graph.keys():
+        newg[key] = []
+
+    for v1, edges in graph.items():
+        for v2, weight in edges:
+            newg[v2].append((v1, weight))
+
+    return newg
 
 def dfs(graph, start, visited, stack):
     visited.add(start)
@@ -28,7 +37,7 @@ def dfs(graph, start, visited, stack):
 
 def containing_colors(graph, color):
     stack = []
-    dfs(graph, color, set(), stack)
+    dfs(transpose(graph), color, set(), stack)
     return len(stack)-1
 
 def contained_bags(graph, color):
@@ -52,12 +61,12 @@ vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
 faded blue bags contain no other bags.
 dotted black bags contain no other bags."""
 
-f, b = parse_graph(txt)
-assert containing_colors(b, "shiny gold") == 4
-assert contained_bags(f, "shiny gold") == 32
+g = parse_graph(txt)
+assert containing_colors(g, "shiny gold") == 4
+assert contained_bags(g, "shiny gold") == 32
 
 with open("input", "rt") as f:
-    f, b = parse_graph(f.read())
+    g = parse_graph(f.read())
 
-print("Part1:", containing_colors(b, "shiny gold"))
-print("Part2:", contained_bags(f, "shiny gold"))
+print("Part1:", containing_colors(g, "shiny gold"))
+print("Part2:", contained_bags(g, "shiny gold"))
