@@ -8,53 +8,64 @@ using namespace std;
 
 struct Vertex
 {
-	vector<pair<string,int>> edges;
+	vector<pair<int,int>> edges;
 	bool visited;
 	int count;
 };
 
 struct Graph
 {
-	unordered_map<string, Vertex> vertices;
-	vector<string> stack;
+	unordered_map<string, int> lookup;
+	vector<Vertex> vertices;
+	vector<int> stack;
 
 	Graph transpose() const
 	{
 		Graph newgraph;
-		for (const auto& [key, value]: vertices)
+		newgraph.vertices.resize(vertices.size());
+		for (size_t v1 = 0; v1 < vertices.size(); v1++)
 		{
-			newgraph.vertices.emplace(key, Vertex());
-		}
-		for (const auto& [name, vertex]: vertices)
-		{
-			for (const auto& [dst, weight]: vertex.edges)
+			for (auto [v2, weight]: vertices[v1].edges)
 			{
-				newgraph.vertices[dst].edges.emplace_back(
-					make_pair(name, weight));
+				newgraph.add_edge(v2, v1, weight);
 			}
 		}
 		return newgraph;
 	}
 
-	void add_edge(const string& v1, const string& v2, int weight)
+	int add_vertex(const string& name)
+	{
+		auto it = lookup.find(name);
+		if (it != lookup.end())
+		{
+			return it->second;
+		}
+
+		int v = vertices.size();
+		vertices.emplace_back(Vertex());
+		lookup[name] = v;
+		return v;
+	}
+
+	void add_edge(int v1, int v2, int weight)
 	{
 		vertices[v1].edges.emplace_back(make_pair(v2, weight));
 	}
 
 	void dfs_reset(void)
 	{
-		for (auto& [key, val]: vertices)
+		for (auto& v: vertices)
 		{
-			val.visited = false;
-			val.count = 0;
+			v.visited = false;
+			v.count = 0;
 		}
 		stack.clear();
 	}
 
-	void dfs_visit(const string& node)
+	void dfs_visit(int node)
 	{
 		vertices[node].visited = true;
-		for (const auto& [col, num]: vertices[node].edges)
+		for (auto [col, num]: vertices[node].edges)
 		{
 			if (!vertices[col].visited)
 			{
@@ -68,24 +79,25 @@ struct Graph
 	{
 		Graph newg = transpose();
 		newg.dfs_reset();
-		newg.dfs_visit(node);
+		newg.dfs_visit(lookup[node]);
 		return newg.stack.size()-1;
 	}
 
 	int contained_bags(const string& node)
 	{
+		int v = lookup[node];
 		dfs_reset();
-		dfs_visit(node);
+		dfs_visit(v);
 		for (auto& bag: stack)
 		{
 			int count = 0;
-			for (const auto& [col, num]: vertices[bag].edges)
+			for (auto [v2, weight]: vertices[bag].edges)
 			{
-				count += num * (vertices[col].count + 1);
+				count += weight * (vertices[v2].count + 1);
 			}
 			vertices[bag].count = count;
 		}
-		return vertices[node].count;
+		return vertices[v].count;
 	}
 };
 
@@ -102,7 +114,7 @@ istream& operator>>(istream& input, Graph& graph)
 			continue;
 		}
 
-		string name = sm[1];
+		int v1 = graph.add_vertex(sm[1]);
 
 		auto end = sregex_iterator();
 		for (auto it = sregex_iterator(line.begin(), line.end(), pat2);
@@ -110,7 +122,8 @@ istream& operator>>(istream& input, Graph& graph)
 		     ++it)
 		{
 			sm = *it;
-			graph.add_edge(name, sm[2], stoi(sm[1]));
+			int v2 = graph.add_vertex(sm[2]);
+			graph.add_edge(v1, v2, stoi(sm[1]));
 		}
 	}
 	return input;
