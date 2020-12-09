@@ -33,20 +33,17 @@ class Decoder(object):
                 break
             self.add(n)
 
-        for i in range(len(seq)):
-            s = seq[i]
-            vmin = s
-            vmax = s
-            for j in range(i+1, len(seq)):
-                s += seq[j]
-                if vmin > seq[j]:
-                    vmin = seq[j]
-                if vmax < seq[j]:
-                    vmax = seq[j]
-                if s > n:
-                    break
-                elif s == n:
-                    return n, vmin+vmax
+        i, j = 0, 1
+        csum = seq[i]+seq[j]
+        while i < j and j < len(seq):
+            if csum < n:
+                j += 1
+                csum += seq[j]
+            elif csum > n:
+                csum -= seq[i]
+                i += 1
+            else:
+                return n, min(seq[i:j+1])+max(seq[i:j+1])
 
         return n, None
 

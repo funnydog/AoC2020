@@ -91,23 +91,35 @@ public:
 			}
 		}
 
-		for (size_t i = 0; i < numbers.size(); i++)
+		if (numbers.size() > 1)
 		{
-			int sum = numbers[i];
-			int max = sum;
-			int min = sum;
-			for (size_t j = i+1; j < numbers.size(); j++)
+			size_t i = 0;
+			size_t j = i+1;
+			int sum = numbers[i] + numbers[j];
+			while (i < j && j < numbers.size())
 			{
-				if (max < numbers[j]) max = numbers[j];
-				if (min > numbers[j]) min = numbers[j];
-				sum += numbers[j];
-				if (sum == outlier)
+				if (sum < outlier)
 				{
-					return make_pair(outlier, min+max);
+					j++;
+					sum += numbers[j];
 				}
 				else if (sum > outlier)
 				{
-					break;
+					sum -= numbers[i];
+					i++;
+				}
+				else
+				{
+					int min = numbers[i];
+					int max = numbers[i];
+					for (i++; i <= j; i++)
+					{
+						if (min > numbers[i])
+							min = numbers[i];
+						if (max < numbers[i])
+							max = numbers[i];
+					}
+					return make_pair(outlier, min+max);
 				}
 			}
 		}
