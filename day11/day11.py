@@ -5,27 +5,11 @@ from copy import deepcopy
 def make_seats(txt):
     return [list(row) for row in txt.strip().split("\n")]
 
-def count_stable(seats, countfn, maxocc=4):
+def count_stable(seats, nextfn, maxocc=4):
     scur = deepcopy(seats)
     snext = deepcopy(seats)
-    height, width = len(seats), len(seats[0])
     while True:
-        for y in range(height):
-            for x in range(width):
-                val = scur[y][x]
-                if val == ".":
-                    pass
-                elif val == "L":
-                    if countfn(scur, width, height, x, y) == 0:
-                        snext[y][x] = "#"
-                    else:
-                        snext[y][x] = "L"
-                else:
-                    if countfn(scur, width, height, x, y) >= maxocc:
-                        snext[y][x] = "L"
-                    else:
-                        snext[y][x] = "#"
-
+        nextfn(scur, snext)
         scur, snext = snext, scur
         if scur == snext:
             break
@@ -34,33 +18,55 @@ def count_stable(seats, countfn, maxocc=4):
 
 DIR = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1))
 
-def count_part1(seats, width, height, x, y):
-    count  = 0
-    for dx, dy in DIR:
-        nx = x + dx
-        ny = y + dy
-        if 0 <= ny < height and 0 <= nx < width:
-            if seats[ny][nx] == "#":
-                count += 1
+def next_part1(cur, out):
+    height, width = len(cur), len(cur[0])
+    for y, row in enumerate(cur):
+        for x, val in enumerate(row):
+            if val == ".":
+                continue
 
-    return count
+            # count the occupied adjacent places
+            count  = 0
+            for dx, dy in DIR:
+                nx = x + dx
+                ny = y + dy
+                if 0 <= ny < height and 0 <= nx < width:
+                    if cur[ny][nx] == "#":
+                        count += 1
 
-def count_part2(seats, width, height, x, y):
-    count = 0
-    for dx, dy in DIR:
-        nx = x + dx
-        ny = y + dy
-        while 0 <= ny < height and 0 <= nx < width:
-            if seats[ny][nx] == "#":
-                count += 1
-                break
-            elif seats[ny][nx] == "L":
-                break
+            # generate the next state for the element at (y,x)
+            if val == "L":
+                out[y][x] = (count == 0) and "#" or "L"
             else:
-                nx += dx
-                ny += dy
+                out[y][x] = (count >= 4) and "L" or "#"
 
-    return count
+def next_part2(cur, out):
+    height, width = len(cur), len(cur[0])
+    for y, row in enumerate(cur):
+        for x, val in enumerate(row):
+            if val == ".":
+                continue
+
+            # count the occupied adjacent places
+            count = 0
+            for dx, dy in DIR:
+                nx = x + dx
+                ny = y + dy
+                while 0 <= ny < height and 0 <= nx < width:
+                    if cur[ny][nx] == "#":
+                        count += 1
+                        break
+                    elif cur[ny][nx] == "L":
+                        break
+                    else:
+                        nx += dx
+                        ny += dy
+
+            # generate the next state for the element at (y,x)
+            if val == "L":
+                out[y][x] = (count == 0) and "#" or "L"
+            else:
+                out[y][x] = (count >= 5) and "L" or "#"
 
 txt="""L.LL.LL.LL
 LLLLLLL.LL
@@ -73,11 +79,11 @@ LLLLLLLLLL
 L.LLLLLL.L
 L.LLLLL.LL"""
 s = make_seats(txt)
-assert count_stable(s, count_part1, 4) == 37
-assert count_stable(s, count_part2, 5) == 26
+assert count_stable(s, next_part1) == 37
+assert count_stable(s, next_part2) == 26
 
 with open("input", "rt") as f:
     s = make_seats(f.read())
 
-print("Part1:", count_stable(s, count_part1, 4))
-print("Part2:", count_stable(s, count_part2, 5))
+print("Part1:", count_stable(s, next_part1))
+print("Part2:", count_stable(s, next_part2))
