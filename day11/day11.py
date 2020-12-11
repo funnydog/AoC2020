@@ -16,12 +16,12 @@ def count_stable(seats, countfn, maxocc=4):
                 if val == ".":
                     pass
                 elif val == "L":
-                    if countfn(scur, x, y) == 0:
+                    if countfn(scur, width, height, x, y) == 0:
                         snext[y][x] = "#"
                     else:
                         snext[y][x] = "L"
                 else:
-                    if countfn(scur, x, y) >= maxocc:
+                    if countfn(scur, width, height, x, y) >= maxocc:
                         snext[y][x] = "L"
                     else:
                         snext[y][x] = "#"
@@ -34,23 +34,23 @@ def count_stable(seats, countfn, maxocc=4):
 
 DIR = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1))
 
-def count_part1(seats, x, y):
+def count_part1(seats, width, height, x, y):
     count  = 0
     for dx, dy in DIR:
         nx = x + dx
         ny = y + dy
-        if 0 <= ny < len(seats) and 0 <= nx < len(seats[ny]):
+        if 0 <= ny < height and 0 <= nx < width:
             if seats[ny][nx] == "#":
                 count += 1
 
     return count
 
-def count_part2(seats, x, y):
+def count_part2(seats, width, height, x, y):
     count = 0
     for dx, dy in DIR:
         nx = x + dx
         ny = y + dy
-        while 0 <= ny < len(seats) and 0 <= nx < len(seats[0]):
+        while 0 <= ny < height and 0 <= nx < width:
             if seats[ny][nx] == "#":
                 count += 1
                 break
