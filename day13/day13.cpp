@@ -14,7 +14,7 @@ static vector<int> parse_busses(const string& busses)
 		next = busses.find(',', pos);
 		if (busses.substr(pos, next-pos) == "x")
 		{
-			bids.push_back(-1);
+			bids.push_back(0);
 		}
 		else
 		{
@@ -31,7 +31,7 @@ static int part1(int earliest, const vector<int>& bids)
 	int bestid = 0;
 	for (auto bid: bids)
 	{
-		if (bid != -1)
+		if (bid)
 		{
 			int time = bid-1 - ((earliest + bid - 1) % bid);
 			if (wait > time)
@@ -50,7 +50,7 @@ static intmax_t part2(const vector<int>& bids)
 	for (int i = 0; i < (int)bids.size(); i++)
 	{
 		auto n = bids[i];
-		if (n != -1)
+		if (n)
 		{
 			// NOTE: mathematically correct modulo of
 			// negative numbers
