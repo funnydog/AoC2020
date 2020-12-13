@@ -73,15 +73,32 @@ def find_start(seq):
             offset = 1
     return cur
 
-assert find_start("7,13,x,x,59,x,31,19") == 1068781
-assert find_start("17,x,13,19") == 3417
-assert find_start("67,7,59,61") == 754018
-assert find_start("67,x,7,59,61") == 779210
-assert find_start("67,7,x,59,61") == 1261476
-assert find_start("1789,37,47,1889") == 1202161486
+# method 3 using the chinese remainder theorem sieve
+def sieve(seq):
+    nums = []
+    for t, s in enumerate(seq.split(",")):
+        if s != "x":
+            n = int(s)
+            nums.append((n, (n-t)%n))
+
+    nums.sort(key = lambda x: -x[0])
+    p, x = 1, 0
+    for n, a in nums:
+        while x % n != a:
+            x += p
+        p *= n
+
+    return x
+
+assert sieve("7,13,x,x,59,x,31,19") == 1068781
+assert sieve("17,x,13,19") == 3417
+assert sieve("67,7,59,61") == 754018
+assert sieve("67,x,7,59,61") == 779210
+assert sieve("67,7,x,59,61") == 1261476
+assert sieve("1789,37,47,1889") == 1202161486
 
 with open("input", "rt") as f:
     estimate, buses = f.read().strip().split("\n")
 
 print("Part1:", wait_time(estimate, buses))
-print("Part2:", find_start(buses))
+print("Part2:", sieve(buses))

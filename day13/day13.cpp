@@ -1,14 +1,14 @@
-#include <numeric>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <cinttypes>
+#include <climits>
 #include <vector>
 
 using namespace std;
 
-static vector<intmax_t> parse_busses(const string& busses)
+static vector<int> parse_busses(const string& busses)
 {
-	vector<intmax_t> bids;
+	vector<int> bids;
 	size_t pos = 0, next;
 	do {
 		next = busses.find(',', pos);
@@ -25,15 +25,15 @@ static vector<intmax_t> parse_busses(const string& busses)
 	return bids;
 }
 
-static intmax_t part1(intmax_t earliest, const vector<intmax_t>& bids)
+static int part1(int earliest, const vector<int>& bids)
 {
-	intmax_t wait = INTMAX_MAX;
-	intmax_t bestid = 0;
+	int wait = INT_MAX;
+	int bestid = 0;
 	for (auto bid: bids)
 	{
 		if (bid != -1)
 		{
-			intmax_t time = bid-1 - ((earliest + bid - 1) % bid);
+			int time = bid-1 - ((earliest + bid - 1) % bid);
 			if (wait > time)
 			{
 				wait = time;
@@ -44,59 +44,35 @@ static intmax_t part1(intmax_t earliest, const vector<intmax_t>& bids)
 	return bestid * wait;
 }
 
-static intmax_t bezout(intmax_t a, intmax_t b)
+static intmax_t part2(const vector<int>& bids)
 {
-	intmax_t old_r = b;
-	intmax_t r = a;
-	intmax_t old_s = 1;
-	intmax_t s = 0;
-
-	while (r)
+	vector<pair<int, int>> nums;
+	for (int i = 0; i < (int)bids.size(); i++)
 	{
-		auto d = imaxdiv(old_r, r);
-		swap(old_r, r);
-		r = d.rem;
-
-		swap(old_s, s);
-		s -= d.quot * old_s;
-	}
-
-	if (old_s < 0)
-	{
-		old_s += a;
-	}
-
-	return old_s * b - 1;
-}
-
-static intmax_t part2(const vector<intmax_t>& bids)
-{
-	intmax_t fullcycle = accumulate(
-		bids.begin(),
-		bids.end(),
-		1LL,
-		[](auto a, auto b) {
-			return b != -1 ? a * b : a;
-		});
-
-	intmax_t start = 0;
-	intmax_t offset = 1;
-	intmax_t prev = bids[0];
-	for (size_t i = 1; i < bids.size(); i++)
-	{
-		if (bids[i] == -1)
+		auto n = bids[i];
+		if (n != -1)
 		{
-			offset++;
-		}
-		else
-		{
-			start += bezout(prev, fullcycle / prev) * offset;
-			start %= fullcycle;
-			prev *= bids[i];
-			offset = 1;
+			// NOTE: mathematically correct modulo of
+			// negative numbers
+			auto a = ((n - i) % n + n) % n;
+			nums.emplace_back(make_pair(n, a));
 		}
 	}
-	return start;
+
+	sort(nums.begin(), nums.end(), [](auto a, auto b) {
+		return a.first > b.first;
+	});
+	intmax_t p = 1;
+	intmax_t x = 0;
+	for (auto [n, a]: nums)
+	{
+		while (x % n != a)
+		{
+			x += p;
+		}
+		p *= n;
+	}
+	return x;
 }
 
 int main(int argc, char *argv[])
