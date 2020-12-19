@@ -43,46 +43,41 @@ class Grammar(object):
         self.txt = txt
         return self.match(0) and self.pos == len(self.txt)
 
+    def match_all(self, symbols):
+        for s in symbols:
+            if s.terminal:
+                if self.txt[self.pos] != s.value:
+                    return False
+                else:
+                    self.pos += 1
+            elif self.patched and s.value == 8:
+                if not self.match(42):
+                    return False
+            elif self.patched and s.value == 11:
+                if not self.match(42):
+                    return False
+                cnt = 0
+                while self.match(42):
+                    cnt += 1
+                if not self.match(31):
+                    return False
+                while self.match(31):
+                    cnt -= 1
+                if cnt < 0:
+                    return False
+            elif not self.match(s.value):
+                return False
+
+        return True
+
     def match(self, pid):
-        if self.pos >= len(self.txt):
+        if self.pos == len(self.txt):
             return False
 
         tmp = self.pos
         for rule in self.productions[pid]:
-            result = True
-            for s in rule:
-                if s.terminal:
-                    if self.txt[self.pos] != s.value:
-                        result = False
-                        break
-                    else:
-                        self.pos += 1
-                elif self.patched and s.value == 8:
-                    if not self.match(42):
-                        result = False
-                        break
-                elif self.patched and s.value == 11:
-                    if not self.match(42):
-                        result = False
-                        break
-                    cnt = 0
-                    while self.match(42):
-                        cnt += 1
-                    if not self.match(31):
-                        result = False
-                        break
-                    while self.match(31):
-                        cnt -= 1
-                    if cnt < 0:
-                        result = False
-                        break
-                elif not self.match(s.value):
-                    result = False
-                    break
-
-            if result:
-                return result
-
+            if self.match_all(rule):
+                return True
             # backtrack and start another rule
             self.pos = tmp
 

@@ -25,6 +25,57 @@ public:
 		return match(txt, 0) && pos == txt.size();
 	}
 
+	bool match_all(const string& txt, const Production& p)
+	{
+		for (auto& sym: p)
+		{
+			if (sym.terminal)
+			{
+				if (txt[pos] != sym.value)
+				{
+					return false;
+				}
+				pos++;
+			}
+			else if (patched && sym.value == 8)
+			{
+				if (!match(txt, 42))
+				{
+					return false;
+				}
+			}
+			else if (patched && sym.value == 11)
+			{
+				if (!match(txt, 42))
+				{
+					return false;
+				}
+				int cnt = 0;
+				while (match(txt, 42))
+				{
+					cnt++;
+				}
+				if (!match(txt, 31))
+				{
+					return false;
+				}
+				while (match(txt, 31))
+				{
+					cnt--;
+				}
+				if (cnt < 0)
+				{
+					return false;
+				}
+			}
+			else if (!match(txt, sym.value))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
 	bool match(const string& txt, int pid)
 	{
 		if (pos >= txt.size())
@@ -33,39 +84,10 @@ public:
 		size_t tmp = pos;
 		for (auto& rule: productions[pid])
 		{
-			for (auto& sym: rule)
+			if (match_all(txt, rule))
 			{
-				if (sym.terminal)
-				{
-					if (txt[pos] != sym.value) goto fail;
-					pos++;
-				}
-				else if (patched && sym.value == 8)
-				{
-					if (!match(txt, 42)) goto fail;
-				}
-				else if (patched && sym.value == 11)
-				{
-					if (!match(txt, 42)) goto fail;
-					int cnt = 0;
-					while (match(txt, 42))
-					{
-						cnt++;
-					}
-					if (!match(txt, 31)) goto fail;
-					while (match(txt, 31))
-					{
-						cnt--;
-					}
-					if (cnt < 0) goto fail;
-				}
-				else if (!match(txt, sym.value))
-				{
-					goto fail;
-				}
+				return true;
 			}
-			return true;
-		fail:
 			// backtrack
 			pos = tmp;
 		}
