@@ -63,8 +63,14 @@ def part2(pattern):
     b = v[i]
     return a * b
 
-with open("input", "rt") as f:
-    pattern = f.read()
+import sys
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-print("Part1:", part1(pattern))
-print("Part2:", part2(pattern))
+    with open(sys.argv[1], "rt") as f:
+        pattern = f.read()
+
+    print("Part1:", part1(pattern))
+    print("Part2:", part2(pattern))
