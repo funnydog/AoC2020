@@ -253,6 +253,7 @@ istream& operator>>(istream& input, Tile& t)
 	}
 	if (y == 10)
 	{
+		t.compute_borders();
 		input.clear();
 	}
 	return input;
@@ -263,7 +264,6 @@ static void find_adjacent(vector<Tile>& tiles)
 	// for each tile find the adjacent tiles
 	for (size_t i = 0; i < tiles.size(); i++)
 	{
-		tiles[i].compute_borders();
 		for (size_t j = 0; j < i; j++)
 		{
 			if (tiles[i].shares_border(tiles[j]))

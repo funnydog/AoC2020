@@ -41,14 +41,14 @@ class Image(object):
 class Tile(Image):
     def __init__(self, tid, rows):
         super(Tile, self).__init__(rows)
+        assert len(self.rows) == len(self.rows[0])
+        assert len(self.rows) == 10
         self.tid = tid
         self.visited = False
         self.px = 0
         self.py = 0
         self.adj = []
-        self.borders = []
-        assert len(self.rows) == len(self.rows[0])
-        assert len(self.rows) == 10
+        self.compute_borders()
 
     def compute_borders(self):
         b = []
@@ -115,7 +115,6 @@ def find_adjacencies(tiles):
     borders = []
     for i in range(len(tiles)):
         # compute the borders for the tile i
-        tiles[i].compute_borders()
         borders.append(set(tiles[i].borders))
 
         # check if the tiles have common borders
