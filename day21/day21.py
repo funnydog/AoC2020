@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def parse(txt):
     foods = []
     for row in txt.strip().split("\n"):
@@ -63,18 +65,19 @@ def part1(foods, allergens):
 def part2(allergens):
     return ",".join(x[1] for x in allergens)
 
-txt = """mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
-trh fvjkl sbzzf mxmxvkd (contains dairy)
-sqjhc fvjkl (contains soy)
-sqjhc mxmxvkd sbzzf (contains fish)"""
-foods = parse(txt)
-allergens = find_allergens(foods)
-assert part1(foods, allergens) == 5
-assert part2(allergens) == "mxmxvkd,sqjhc,fvjkl"
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    foods = parse(f.read())
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-allergens = find_allergens(foods)
-print("Part1:", part1(foods, allergens))
-print("Part2:", part2(allergens))
+    foods = parse(txt)
+    allergens = find_allergens(foods)
+    print("Part1:", part1(foods, allergens))
+    print("Part2:", part2(allergens))

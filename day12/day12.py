@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def xmul(a, b):
     return (a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0])
 
@@ -71,17 +73,17 @@ def navigate_part2(txt):
 
     return manhattan(curpos)
 
-txt = """F10
-N3
-F7
-R90
-F11
-"""
-assert navigate_part1(txt) == 25
-assert navigate_part2(txt) == 286
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    txt = f.read()
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-print("Part1:", navigate_part1(txt))
-print("Part2:", navigate_part2(txt))
+    print("Part1:", navigate_part1(txt))
+    print("Part2:", navigate_part2(txt))

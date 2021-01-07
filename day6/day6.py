@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def sum_common_answers(txt):
     sum_any = 0
     sum_all = 0
@@ -32,28 +34,18 @@ def sum_common_answers(txt):
 
     return sum_any, sum_all
 
-txt = """abc
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-a
-b
-c
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-ab
-ac
-
-a
-a
-a
-a
-
-b"""
-
-
-assert sum_common_answers(txt) == (11, 6)
-
-with open("input", "rt") as f:
-    txt = f.read()
-
-part1, part2 = sum_common_answers(txt)
-print("Part1:", part1)
-print("Part2:", part2)
+    part1, part2 = sum_common_answers(txt)
+    print("Part1:", part1)
+    print("Part2:", part2)

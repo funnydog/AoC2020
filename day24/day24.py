@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 WHITE = 0
 BLACK = 1
 
@@ -87,15 +89,19 @@ def simulate(floor, days):
         qmin, qmax = nqmin-1, nqmax+1
         rmin, rmax = nrmin-1, nrmax+1
 
-import sys
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
-        exit(1)
+        sys.exit(1)
 
-    with open(sys.argv[1], "rt") as f:
-        floor = pose_floor(f.read())
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
+    floor = pose_floor(txt)
     print("Part1:", count_black_tiles(floor))
     simulate(floor, 100)
     print("Part2:", count_black_tiles(floor))

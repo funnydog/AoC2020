@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import time
+import sys
 
 class System(object):
     def __init__(self):
@@ -54,23 +54,19 @@ class System(object):
 
         return None
 
-txt = """nop +0
-acc +1
-jmp +4
-acc +3
-jmp -3
-acc -99
-acc +1
-jmp -4
-acc +6"""
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-s = System()
-s.load(txt)
-assert s.run() == 5
-assert s.analyze() == 8
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    s.load(f.read())
-
-print("Part1:", s.run())
-print("Part2:", s.analyze())
+    s = System()
+    s.load(txt)
+    print("Part1:", s.run())
+    print("Part2:", s.analyze())

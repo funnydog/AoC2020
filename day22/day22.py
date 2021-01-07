@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def parse(txt):
     p1 = []
     p2 = []
@@ -47,24 +49,17 @@ def score(txt, recursive):
     winner = p1 or p2
     return sum((i+1)*d for i, d in enumerate(reversed(winner)))
 
-txt = """Player 1:
-9
-2
-6
-3
-1
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-Player 2:
-5
-8
-4
-7
-10"""
-assert score(txt, False) == 306
-assert score(txt, True) == 291
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    txt = f.read()
-
-print("Part1:", score(txt, False))
-print("Part2:", score(txt, True))
+    print("Part1:", score(txt, False))
+    print("Part2:", score(txt, True))

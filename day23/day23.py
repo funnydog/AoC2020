@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def simulate(v, nxt, moves):
     lowest = min(v)
     highest = max(v)
@@ -63,14 +65,17 @@ def part2(pattern):
     b = v[i]
     return a * b
 
-import sys
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
         sys.exit(1)
 
-    with open(sys.argv[1], "rt") as f:
-        pattern = f.read()
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-    print("Part1:", part1(pattern))
-    print("Part2:", part2(pattern))
+    print("Part1:", part1(txt))
+    print("Part2:", part2(txt))

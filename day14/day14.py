@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+import sys
 
 MASKP = re.compile(r"mask = ([X10]{36})")
 MEMP = re.compile(r"mem\[(\d+)\] = (\d+)")
@@ -71,20 +72,29 @@ def part2(program):
 
     return sum(mem.values())
 
-txt = """mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
-mem[8] = 11
-mem[7] = 101
-mem[8] = 0"""
-assert part1(txt) == 165
+# txt = """mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+# mem[8] = 11
+# mem[7] = 101
+# mem[8] = 0"""
+# assert part1(txt) == 165
 
-txt = """mask = 000000000000000000000000000000X1001X
-mem[42] = 100
-mask = 00000000000000000000000000000000X0XX
-mem[26] = 1"""
-assert part2(txt) == 208
+# txt = """mask = 000000000000000000000000000000X1001X
+# mem[42] = 100
+# mask = 00000000000000000000000000000000X0XX
+# mem[26] = 1"""
+# assert part2(txt) == 208
 
-with open("input", "rt") as f:
-    txt = f.read()
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-print("Part1:", part1(txt))
-print("Part2:", part2(txt))
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
+
+    print("Part1:", part1(txt))
+    print("Part2:", part2(txt))

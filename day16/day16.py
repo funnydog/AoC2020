@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+import sys
 
 RULES = re.compile(r"(.*): (\d+)-(\d+) or (\d+)-(\d+)")
 
@@ -39,19 +40,19 @@ def part1(txt):
                 error += value
     return error
 
-txt = """class: 1-3 or 5-7
-row: 6-11 or 33-44
-seat: 13-40 or 45-50
+# txt = """class: 1-3 or 5-7
+# row: 6-11 or 33-44
+# seat: 13-40 or 45-50
 
-your ticket:
-7,1,14
+# your ticket:
+# 7,1,14
 
-nearby tickets:
-7,3,47
-40,4,50
-55,2,20
-38,6,12"""
-assert part1(txt) == 71
+# nearby tickets:
+# 7,3,47
+# 40,4,50
+# 55,2,20
+# 38,6,12"""
+# assert part1(txt) == 71
 
 def valid(rules, ticket):
     for value in ticket:
@@ -80,7 +81,6 @@ def part2(txt):
 
     result = []
     columns = constraints(rules, nearby)
-    #print("\n".join(str(x[0]) + " " + ",".join(x[1]) for x in columns))
     while columns:
         idx = min(range(len(columns)), key = lambda x: len(columns[x][1]))
         el = columns.pop(idx)
@@ -98,8 +98,17 @@ def part2(txt):
 
     return m
 
-with open("input", "rt") as f:
-    txt = f.read()
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-print("Part1:", part1(txt))
-print("Part2:", part2(txt))
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
+
+    print("Part1:", part1(txt))
+    print("Part2:", part2(txt))

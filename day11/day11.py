@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 from copy import deepcopy
 
 def make_seats(txt):
@@ -68,22 +69,18 @@ def next_part2(cur, out):
             else:
                 out[y][x] = (count >= 5) and "L" or "#"
 
-txt="""L.LL.LL.LL
-LLLLLLL.LL
-L.L.L..L..
-LLLL.LL.LL
-L.LL.LL.LL
-L.LLLLL.LL
-..L.L.....
-LLLLLLLLLL
-L.LLLLLL.L
-L.LLLLL.LL"""
-s = make_seats(txt)
-assert count_stable(s, next_part1) == 37
-assert count_stable(s, next_part2) == 26
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    s = make_seats(f.read())
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-print("Part1:", count_stable(s, next_part1))
-print("Part2:", count_stable(s, next_part2))
+    s = make_seats(txt)
+    print("Part1:", count_stable(s, next_part1))
+    print("Part2:", count_stable(s, next_part2))

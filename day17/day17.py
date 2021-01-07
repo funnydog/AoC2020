@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 class Cube(object):
     def __init__(self, cycles, dim):
         self.values = {}
@@ -96,14 +98,17 @@ def conwaycube(txt, cycles, dim):
 
     return cube.count()
 
-txt = """.#.
-..#
-###"""
-assert conwaycube(txt, 6, 3) == 112
-assert conwaycube(txt, 6, 4) == 848
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    txt = f.read()
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-print("Part1:", conwaycube(txt, 6, 3))
-print("Part2:", conwaycube(txt, 6, 4))
+    print("Part1:", conwaycube(txt, 6, 3))
+    print("Part2:", conwaycube(txt, 6, 4))

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+import sys
 
 PATTERN = re.compile(r"(.*) bags contain|(\d+) ([^.,]*) bag")
 
@@ -52,22 +53,18 @@ def contained_bags(graph, color):
         counts[bag] = count
     return counts[color]
 
-txt = """light red bags contain 1 bright white bag, 2 muted yellow bags.
-dark orange bags contain 3 bright white bags, 4 muted yellow bags.
-bright white bags contain 1 shiny gold bag.
-muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
-shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
-dark olive bags contain 3 faded blue bags, 4 dotted black bags.
-vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
-faded blue bags contain no other bags.
-dotted black bags contain no other bags."""
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-g = parse_graph(txt)
-assert containing_colors(g, "shiny gold") == 4
-assert contained_bags(g, "shiny gold") == 32
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
-with open("input", "rt") as f:
-    g = parse_graph(f.read())
-
-print("Part1:", containing_colors(g, "shiny gold"))
-print("Part2:", contained_bags(g, "shiny gold"))
+    g = parse_graph(txt)
+    print("Part1:", containing_colors(g, "shiny gold"))
+    print("Part2:", contained_bags(g, "shiny gold"))

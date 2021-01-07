@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import re
+import sys
 
-pattern = re.compile(r"^(\d+)-(\d+) (\S): (.*)$")
-
-valid1 = 0
-valid2 = 0
-with open("input", "rt") as f:
-    for line in f:
+def find_valid(txt):
+    pattern = re.compile(r"^(\d+)-(\d+) (\S): (.*)$")
+    valid1 = 0
+    valid2 = 0
+    for line in txt.splitlines():
         m = pattern.match(line)
         if m:
             lowest = int(m.group(1))
@@ -27,5 +27,20 @@ with open("input", "rt") as f:
             if (password[lowest-1] == letter) != (password[highest-1] == letter):
                 valid2 += 1
 
-print("Part1:", valid1)
-print("Part2:", valid2)
+    return valid1, valid2
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
+
+    part1, part2 = find_valid(txt)
+    print("Part1:", part1)
+    print("Part2:", part2)

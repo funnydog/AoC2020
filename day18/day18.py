@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 # tokens
 NUM = 0
 ADD = 1
@@ -100,24 +102,36 @@ class Grammar2(Grammar1):
             value *= self.term()
         return value
 
-g1 = Grammar1()
-g2 = Grammar2()
+# g1 = Grammar1()
+# g2 = Grammar2()
+# assert g1.eval("1 + 2 * 3 + 4 * 5 + 6") == 71
+# assert g1.eval("5 + (8 * 3 + 9 + 3 * 4 * 3)") == 437
+# assert g1.eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 12240
+# assert g1.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 13632
+# assert g2.eval("1 + 2 * 3 + 4 * 5 + 6") == 231
+# assert g2.eval("1 + (2 * 3) + (4 * (5 + 6))") == 51
+# assert g2.eval("2 * 3 + (4 * 5)") == 46
+# assert g2.eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 669060
+# assert g2.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 23340
 
-assert g1.eval("1 + 2 * 3 + 4 * 5 + 6") == 71
-assert g1.eval("5 + (8 * 3 + 9 + 3 * 4 * 3)") == 437
-assert g1.eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 12240
-assert g1.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 13632
-assert g2.eval("1 + 2 * 3 + 4 * 5 + 6") == 231
-assert g2.eval("1 + (2 * 3) + (4 * (5 + 6))") == 51
-assert g2.eval("2 * 3 + (4 * 5)") == 46
-assert g2.eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 669060
-assert g2.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 23340
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
 
-part1, part2 = 0, 0
-with open("input", "rt") as f:
-    for line in f:
+    try:
+        with open(sys.argv[1], "rt") as f:
+            txt = f.read()
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
+
+    g1 = Grammar1()
+    g2 = Grammar2()
+    part1, part2 = 0, 0
+    for line in txt.splitlines():
         part1 += g1.eval(line)
         part2 += g2.eval(line)
 
-print("Part1:", part1)
-print("Part2:", part2)
+    print("Part1:", part1)
+    print("Part2:", part2)

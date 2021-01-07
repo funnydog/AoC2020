@@ -203,10 +203,14 @@ def part2(tiles):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: {} <filename>".format(sys.argv[0]), file=sys.stderr)
-        exit(1)
+        sys.exit(1)
 
-    with open(sys.argv[1], "rt") as f:
-        tiles = parse_tiles(f)
+    try:
+        with open(sys.argv[1], "rt") as f:
+            tiles = parse_tiles(f)
+    except:
+        print("Cannot open {}".format(sys.argv[1]), file=sys.stderr)
+        sys.exit(1)
 
     find_adjacencies(tiles)
     print("Part1:", part1(tiles))
