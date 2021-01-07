@@ -1,7 +1,7 @@
 #include <fstream>
-#include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -112,14 +112,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 	}
 	input.close();
 
-	cout << "Part1: " << navigate_part1(instructions) << endl
-	     << "Part2: " << navigate_part2(instructions) << endl;
+	fmt::print("Part1: {}\n", navigate_part1(instructions));
+	fmt::print("Part2: {}\n", navigate_part2(instructions));
 	return 0;
 }

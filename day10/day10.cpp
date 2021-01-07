@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -67,14 +67,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -88,11 +88,11 @@ int main(int argc, char *argv[])
 
 	sort(jolts.begin(), jolts.end());
 
-	cout << "Part1: " << joltsmul(jolts) << endl;
+	fmt::print("Part1: {}\n", joltsmul(jolts));
 
 	jolts.insert(jolts.begin(), 0);
 	jolts.push_back(jolts.back()+3);
-	cout << "Part2: " << solutions(jolts) << endl;
+	fmt::print("Part2: {}\n", solutions(jolts));
 
 	return 0;
 }

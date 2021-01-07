@@ -1,7 +1,7 @@
 #include <cassert>
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -38,27 +38,27 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
 	string line;
-	if (!getline(input, line))
+	getline(input, line);
+	input.close();
+	if (input.fail())
 	{
-		cerr << "Cannot parse the file" << endl;
+		fmt::print(stderr, "Cannot parse the file\n");
 		return 1;
 	}
-	input.close();
 
-	cout << "Part1: " << spoken_game(line, 2020) << endl
-	     << "Part2: " << spoken_game(line, 30000000ULL) << endl;
-
+	fmt::print("Part1: {}\n", spoken_game(line, 2020));
+	fmt::print("Part2: {}\n", spoken_game(line, 30000000ULL));
 	return 0;
 }

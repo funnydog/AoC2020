@@ -1,4 +1,5 @@
 CXXFLAGS=-Wall -std=c++17 -Os
+LDLIBS=-lfmt
 
 .PHONY: all clean
 

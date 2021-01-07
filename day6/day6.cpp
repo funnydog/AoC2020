@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <fstream>
-#include <iostream>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -45,22 +45,20 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
-	auto sums = sum_common_answers(input);
+	auto [part1, part2] = sum_common_answers(input);
 	input.close();
 
-	cout << "Part1: " << sums.first << endl
-	     << "Part2: " << sums.second << endl;
-
+	fmt::print("Part1: {}\nPart2: {}\n", part1, part2);
 	return 0;
 }

@@ -2,8 +2,8 @@
 #include <cassert>
 #include <climits>
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -175,10 +175,10 @@ ostream& operator<<(ostream& out, const Hypercube &c)
 		{
 			out << "z = " << cur.pos[2] << endl;
 		}
-		cout << (c.get(cur) ? '#' : '.');
+		out << (c.get(cur) ? '#' : '.');
 		if (cur.pos[0] == end.pos[0]-1)
 		{
-			cout << endl;
+			out << endl;
 		}
 	} while (next(cur, start, end, c.dim));
 	return out;
@@ -212,14 +212,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -233,12 +233,11 @@ int main(int argc, char *argv[])
 	size_t len = lines.size();
 	if (!len)
 	{
-		cerr << "Cannot parse " << argv[1] << endl;
+		fmt::print(stderr, "Cannot parse the data\n");
 		return 1;
 	}
 
-	cout << "Part1: " << conway_cube(lines, 6, 3) << endl
-	     << "Part2: " << conway_cube(lines, 6, 4) << endl;
-
+	fmt::print("Part1: {}\n", conway_cube(lines, 6, 3));
+	fmt::print("Part2: {}\n", conway_cube(lines, 6, 4));
 	return 0;
 }

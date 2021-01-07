@@ -1,8 +1,8 @@
-#include <iostream>
 #include <fstream>
 #include <numeric>
 #include <utility>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -56,14 +56,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	input >> map;
 	input.close();
 
-	cout << "Part1: " << map.count_trees(3, 1) << endl;
+	fmt::print("Part1: {}\n", map.count_trees(3, 1));
 
 	const pair<int, int> SLOPES[] = {
 		make_pair(1, 1),
@@ -80,15 +80,14 @@ int main(int argc, char *argv[])
 		make_pair(7, 1),
 		make_pair(1, 2),
 	};
-	cout << "Part2: "
-	     << accumulate(
-		     SLOPES,
-		     SLOPES + sizeof(SLOPES)/sizeof(SLOPES[0]),
-		     1ULL,
-		     [&map](unsigned long long a, const pair<int,int>& p) {
-			     return a * map.count_trees(p.first, p.second);
-		     })
-	     << endl;
-
+	fmt::print(
+		"Part2: {}\n",
+		accumulate(
+			SLOPES,
+			SLOPES + sizeof(SLOPES)/sizeof(SLOPES[0]),
+			1ULL,
+			[&map](unsigned long long a, const pair<int,int>& p) {
+				return a * map.count_trees(p.first, p.second);
+			}));
 	return 0;
 }

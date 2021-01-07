@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -115,27 +115,27 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
-
 	string pattern;
-	if (!getline(input, pattern))
+	getline(input, pattern);
+	input.close();
+	if (input.fail())
 	{
-		cerr << "Cannot load the pattern" << endl;
+		fmt::print(stderr, "Cannot load the pattern\n");
 		return 1;
 	}
-	input.close();
 
-	cout << "Part1: " << part1(pattern) << endl
-	     << "Part2: " << part2(pattern) << endl;
+	fmt::print("Part1: {}\n", part1(pattern));
+	fmt::print("Part2: {}\n", part2(pattern));
 	return 0;
 
 }

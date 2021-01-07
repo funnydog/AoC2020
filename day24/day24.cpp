@@ -1,8 +1,8 @@
 #include <climits>
 #include <fstream>
 #include <functional>
-#include <iostream>
 #include <unordered_set>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -186,27 +186,30 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
+
 	Floor f;
-	if (!(input >> f))
+	input >> f;
+	input.close();
+	if (input.fail())
 	{
-		cerr << "Cannot parse the instructions." << endl;
-		input.close();
+		fmt::print(stderr, "Cannot parse the instructions.\n");
 		return 1;
 	}
 	input.close();
 
-	cout << "Part1: " << f.count_black_tiles() << endl;
+	fmt::print("Part1: {}\n", f.count_black_tiles());
+
 	f.simulate(100);
-	cout << "Part2: " << f.count_black_tiles() << endl;
+	fmt::print("Part2: {}\n", f.count_black_tiles());
 	return 0;
 }

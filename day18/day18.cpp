@@ -1,6 +1,6 @@
 #include <cctype>
 #include <fstream>
-#include <iostream>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -77,7 +77,7 @@ protected:
 		}
 		else
 		{
-			cerr << "Unknown character: " << txt[pos] << endl;
+			fmt::print(stderr, "Unknown character: {}\n", txt[pos]);
 			exit(1);
 		}
 	}
@@ -97,19 +97,19 @@ protected:
 			v = expression(txt);
 			if (cur.type != TokenType::RPAR)
 			{
-				cerr << "Error: found " << static_cast<int>(cur.type)
-				     << " expected " << static_cast<int>(TokenType::RPAR)
-				     << endl;
+				fmt::print(stderr, "Error: found {}, expected {}\n",
+					   static_cast<int>(cur.type),
+					   static_cast<int>(TokenType::RPAR));
 				exit(1);
 			}
 			scan_next(txt);
 		}
 		else
 		{
-			cerr << "Error: found " << static_cast<int>(cur.type)
-			     << " expected " << static_cast<int>(TokenType::NUM)
-			     << " or " << static_cast<int>(TokenType::LPAR)
-			     << endl;
+			fmt::print(stderr, "Error: found {}, expected {} or {}\n",
+				   static_cast<int>(cur.type),
+				   static_cast<int>(TokenType::RPAR),
+				   static_cast<int>(TokenType::LPAR));
 			exit(1);
 		}
 		return v;
@@ -178,14 +178,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -201,7 +201,6 @@ int main(int argc, char *argv[])
 	}
 	input.close();
 
-	cout << "Part1: " << part1 << endl
-	     << "Part2: " << part2 << endl;
+	fmt::print("Part1: {}\nPart2: {}\n", part1, part2);
 	return 0;
 }

@@ -1,11 +1,11 @@
 #include <algorithm>
-#include <numeric>
-#include <fstream>
-#include <iostream>
-#include <deque>
-#include <vector>
-#include <cstring>
 #include <cassert>
+#include <cstring>
+#include <deque>
+#include <fstream>
+#include <numeric>
+#include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -392,14 +392,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -412,7 +412,8 @@ int main(int argc, char *argv[])
 	input.close();
 
 	find_adjacent(tv);
-	cout << "Part1: " << part1(tv) << endl
-	     << "Part2: " << part2(tv) << endl;
+
+	fmt::print("Part1: {}\n", part1(tv));
+	fmt::print("Part2: {}\n", part2(tv));
 	return 0;
 }

@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cassert>
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -32,14 +32,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -73,8 +73,7 @@ int main(int argc, char *argv[])
 			expected = *it - 1;
 		}
 	}
-	cout << "Part1: " << highest << endl
-	     << "Part2: " << expected << endl;
 
+	fmt::print("Part1: {}\nPart2: {}\n", highest, expected);
 	return 0;
 }

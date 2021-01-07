@@ -1,31 +1,31 @@
 #include <fstream>
-#include <iostream>
 #include <regex>
 #include <unordered_map>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
-struct rule
+struct Rule
 {
 	int a;
 	int b;
 	int c;
 	int d;
 
-	int check_value(int v) const
+	bool is_valid(int v) const noexcept
 	{
 		return (a <= v && v <= b) || (c <= v && v <= d);
 	}
 };
 
-struct ticket
+struct Ticket
 {
 	vector<int> values;
 
-	ticket() = default;
+	Ticket() = default;
 
-	explicit ticket(string& str)
+	explicit Ticket(string& str)
 	{
 		size_t pos = 0;
 		size_t next;
@@ -37,12 +37,12 @@ struct ticket
 		values.push_back(stoi(str.substr(pos)));
 	}
 
-	bool is_valid(const vector<rule>& rules) const
+	bool is_valid(const vector<Rule>& rules) const
 	{
 		for (auto v: values)
 		{
-			if (!any_of(rules.begin(), rules.end(), [&v](auto &r){
-				return r.check_value(v);
+			if (!any_of(rules.begin(), rules.end(), [v](const Rule &r){
+				return r.is_valid(v);
 			}))
 			{
 				return false;
@@ -52,21 +52,21 @@ struct ticket
 	}
 };
 
-struct problem
+struct Problem
 {
 	vector<string> names;
-	vector<rule> rules;
-	vector<ticket> nearby;
-	ticket my_ticket;
+	vector<Rule> rules;
+	vector<Ticket> nearby;
+	Ticket my_ticket;
 };
 
-struct constraint
+struct Constraint
 {
 	size_t col;
 	vector<size_t> rules;
 };
 
-istream& operator>>(istream& input, problem& p)
+istream& operator>>(istream& input, Problem& p)
 {
 	const regex RULE("^(.*): (\\d+)-(\\d+) or (\\d+)-(\\d+)$");
 
@@ -79,7 +79,7 @@ istream& operator>>(istream& input, problem& p)
 	{
 		if (state == RULES)
 		{
-			if (line == "your ticket:"s)
+			if (line == "your ticket:")
 			{
 				state = TICKET;
 				continue;
@@ -89,7 +89,7 @@ istream& operator>>(istream& input, problem& p)
 			if (regex_match(line, sm, RULE))
 			{
 				p.names.emplace_back(sm[1]);
-				p.rules.emplace_back(rule{
+				p.rules.emplace_back(Rule{
 						stoi(sm[2]),
 						stoi(sm[3]),
 						stoi(sm[4]),
@@ -105,14 +105,14 @@ istream& operator>>(istream& input, problem& p)
 			}
 			else if (line.size())
 			{
-				p.my_ticket = ticket(line);
+				p.my_ticket = Ticket(line);
 			}
 		}
 		else if (state == NEARBY)
 		{
 			if (line.size())
 			{
-				p.nearby.emplace_back(ticket(line));
+				p.nearby.emplace_back(Ticket(line));
 			}
 		}
 		else
@@ -127,15 +127,15 @@ istream& operator>>(istream& input, problem& p)
 	return input;
 }
 
-static size_t part1(const problem& p)
+static size_t part1(const Problem& p)
 {
 	size_t error = 0;
 	for (auto& t: p.nearby)
 	{
 		for (auto v: t.values)
 		{
-			if (!any_of(p.rules.begin(), p.rules.end(), [&v](auto& r) {
-				return r.check_value(v);
+			if (!any_of(p.rules.begin(), p.rules.end(), [v](const Rule& r) {
+				return r.is_valid(v);
 			}))
 			{
 				error += v;
@@ -145,9 +145,9 @@ static size_t part1(const problem& p)
 	return error;
 }
 
-static vector<constraint> constraints(const problem& p)
+static vector<Constraint> constraints(const Problem& p)
 {
-	vector<constraint> c;
+	vector<Constraint> c;
 
 	for (size_t col = 0; col < p.my_ticket.values.size(); col++)
 	{
@@ -156,35 +156,35 @@ static vector<constraint> constraints(const problem& p)
 		{
 			auto& rule = p.rules[j];
 			if (all_of(p.nearby.begin(), p.nearby.end(),
-				   [&rule, col](const auto& t) {
-					   return rule.check_value(t.values[col]);
+				   [&rule, col](const Ticket& t) {
+					   return rule.is_valid(t.values[col]);
 				   }))
 			{
 				columns.push_back(j);
 			}
 		}
-		c.emplace_back(constraint{col, move(columns)});
+		c.emplace_back(Constraint{col, move(columns)});
 	}
 	return c;
 }
 
-static size_t part2(problem& p)
+static size_t part2(Problem& p)
 {
 	// filter out the wrong nearby data
 	p.nearby.erase(
-		remove_if(p.nearby.begin(), p.nearby.end(), [&p](auto &t) {
+		remove_if(p.nearby.begin(), p.nearby.end(), [&p](const Ticket& t) {
 			return !t.is_valid(p.rules);
 		}),
 		p.nearby.end());
 
 	// get the constraints
-	vector<constraint> con = constraints(p);
+	vector<Constraint> con = constraints(p);
 
 	// constraint elimination
 	vector<size_t> result(p.rules.size());
 	while (con.size())
 	{
-		auto it = min_element(con.begin(), con.end(), [](auto& a, auto& b) {
+		auto it = min_element(con.begin(), con.end(), [](const Constraint& a, const Constraint& b) {
 			return a.rules.size() < b.rules.size();
 		});
 		size_t rule = it->rules[0];
@@ -216,28 +216,27 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
-	problem p;
+	Problem p;
 	input >> p;
 	input.close();
 	if (input.fail())
 	{
-		cerr << "Cannot parse " << argv[1] << endl;
+		fmt::print(stderr, "Cannot parse the data\n");
 		return 1;
 	}
 
-	cout << "Part1: " << part1(p) << endl
-	     << "Part2: " << part2(p) << endl;
-
+	fmt::print("Part1: {}\n", part1(p));
+	fmt::print("Part2: {}\n", part2(p));
 	return 0;
 }

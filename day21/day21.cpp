@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 #include <numeric>
 #include <unordered_map>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -179,14 +179,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -200,8 +200,7 @@ int main(int argc, char *argv[])
 
 	auto allergens = find_allergens(foods);
 
-	cout << "Part1: " << part1(foods, allergens) << endl
-	     << "Part2: " << part2(allergens) << endl;
-
+	fmt::print("Part1: {}\n", part1(foods, allergens));
+	fmt::print("Part2: {}\n", part2(allergens));
 	return 0;
 }

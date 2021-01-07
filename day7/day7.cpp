@@ -1,8 +1,8 @@
 #include <fstream>
-#include <iostream>
 #include <regex>
 #include <unordered_map>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -143,14 +143,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -159,12 +159,11 @@ int main(int argc, char *argv[])
 	input.close();
 	if (input.fail())
 	{
-		cerr << "Unable to parse the graph" << endl;
+		fmt::print(stderr, "Unable to parse the data\n");
 		return 1;
 	}
 
-	cout << "Part1: " << graph.containing_colors("shiny gold") << endl
-	     << "Part2: " << graph.contained_bags("shiny gold") << endl;
-
+	fmt::print("Part1: {}\n", graph.containing_colors("shiny gold"));
+	fmt::print("Part2: {}\n", graph.contained_bags("shiny gold"));
 	return 0;
 }

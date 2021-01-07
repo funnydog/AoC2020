@@ -1,8 +1,8 @@
-#include <fstream>
-#include <iostream>
-#include <deque>
-#include <vector>
 #include <algorithm>
+#include <deque>
+#include <fstream>
+#include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -137,14 +137,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 3)
 	{
-		cerr << "Usage: " << argv[0] << " <length> <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <length> <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[2]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[2] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[2]);
 		return 1;
 	}
 
@@ -158,8 +158,7 @@ int main(int argc, char *argv[])
 
 	Decoder d(stoi(argv[1]));
 	auto [outlier, key] = d.find_solutions(numbers);
-	cout << "Part1: " << outlier << endl
-	     << "Part2: " << key << endl;
 
+	fmt::print("Part1: {}\nPart2: {}\n", outlier, key);
 	return 0;
 }

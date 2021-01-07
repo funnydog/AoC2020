@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 #include <climits>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -79,29 +79,32 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
 	size_t earliest;
 	string busses;
-	if (!(input >> earliest) || !getline(input, busses) || !getline(input, busses))
+	input >> earliest;
+	getline(input, busses);
+	getline(input, busses);
+	input.close();
+	if (input.fail())
 	{
-		cerr << "Cannot parse the data" << endl;
-		input.close();
+		fmt::print(stderr, "Cannot parse the data\n");
 		return 1;
 	}
-	input.close();
+
 	auto bids = parse_busses(busses);
 
-	cout << "Part1: " << part1(earliest, bids) << endl
-	     << "Part2: " << part2(bids) << endl;
+	fmt::print("Part1: {}\n", part1(earliest, bids));
+	fmt::print("Part2: {}\n", part2(bids));
 	return 0;
 }

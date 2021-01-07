@@ -1,6 +1,6 @@
-#include <iostream>
 #include <fstream>
 #include <regex>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -8,14 +8,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream file(argv[1]);
 	if (!file)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
 
@@ -43,8 +43,6 @@ int main(int argc, char *argv[])
 	}
 	file.close();
 
-	cout << "Part1: " << valid1 << endl
-	     << "Part2: " << valid2 << endl;
-
+	fmt::print("Part1: {}\nPart2: {}\n", valid1, valid2);
 	return 0;
 }

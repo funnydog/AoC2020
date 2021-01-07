@@ -1,9 +1,9 @@
 #include <fstream>
 #include <functional>
-#include <iostream>
 #include <regex>
 #include <unordered_map>
 #include <vector>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -158,14 +158,14 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}", argv[1]);
 		return 1;
 	}
 
@@ -179,8 +179,6 @@ int main(int argc, char *argv[])
 	}
 	input.close();
 
-	cout << "Part1: " << part1 << endl
-	     << "Part2: " << part2 << endl;
-
+	fmt::print("Part1: {}\nPart2: {}\n", part1, part2);
 	return 0;
 }

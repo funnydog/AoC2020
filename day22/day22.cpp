@@ -1,7 +1,7 @@
 #include <fstream>
-#include <iostream>
 #include <deque>
 #include <set>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -169,21 +169,21 @@ int main(int argc, char *argv[])
 {
 	if (argc < 2)
 	{
-		cerr << "Usage: " << argv[0] << " <filename>" << endl;
+		fmt::print(stderr, "Usage: {} <filename>\n", argv[0]);
 		return 1;
 	}
 
 	ifstream input(argv[1]);
 	if (!input)
 	{
-		cerr << "Cannot open " << argv[1] << endl;
+		fmt::print(stderr, "Cannot open {}\n", argv[1]);
 		return 1;
 	}
+
 	auto p = load(input);
 	input.close();
 
-	cout << "Part1: " << get_score(p.first, p.second, false) << endl
-	     << "Part2: " << get_score(p.first, p.second, true) << endl;
-
+	fmt::print("Part1: {}\n",get_score(p.first, p.second, false));
+	fmt::print("Part2: {}\n", get_score(p.first, p.second, true));
 	return 0;
 }
